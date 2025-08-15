@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AgendaApp.API.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgendaApp.API.Controllers
@@ -10,7 +11,14 @@ namespace AgendaApp.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok();
+            //Instanciando a classe do repositório de categorias
+            var categoriaRepository = new CategoriaRepository();
+
+            //Consultando todas as categorias
+            var categorias = categoriaRepository.ObterTodos();
+
+            //Retornando as categorias
+            return Ok(categorias);
         }
     }
 }

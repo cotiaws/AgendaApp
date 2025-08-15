@@ -1,4 +1,6 @@
-﻿namespace AgendaApp.API.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace AgendaApp.API.Entities
 {
     /// <summary>
     /// Modelo de dados de entidade para Categoria
@@ -10,6 +12,7 @@
 
         #region Relacionamentos
 
+        [JsonIgnore]
         public List<Tarefa> Tarefas { get; set; } = new();
 
         #endregion
