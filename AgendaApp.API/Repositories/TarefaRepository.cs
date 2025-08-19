@@ -1,4 +1,5 @@
 ﻿using AgendaApp.API.Contexts;
+using AgendaApp.API.Dtos;
 using AgendaApp.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -73,6 +74,51 @@ namespace AgendaApp.API.Repositories
                         .Set<Tarefa>()
                         .Include(t => t.Categoria)
                         .SingleOrDefault(t => t.Id == id);
+            }
+        }
+
+        /// <summary>
+        /// Método para consultar a quantidade de tarefas por prioridade dentro de um período de datas.
+        /// </summary>
+        public List<TarefaPrioridadeResponseDto> ObterTarefasPorPrioridade(DateTime dataHoraInicio, DateTime dataHoraFim)
+        {
+            using (var context = new DataContext())
+            {
+                return context
+                        .Set<Tarefa>()
+                        .Where(t => t.DataHora >= dataHoraInicio
+                                 && t.DataHora <= dataHoraFim)
+                        .GroupBy(t => t.Prioridade)
+                        .Select(g => new TarefaPrioridadeResponseDto
+                        {
+                            NomePrioridade = g.Key.ToString(),
+                            QtdTarefas = g.Count()
+                        })
+                        .OrderByDescending(dto => dto.QtdTarefas)
+                        .ToList();
+            }
+        }
+
+        /// <summary>
+        /// Método para consultar a quantidade de tarefas por categoria dentro de um período de datas.
+        /// </summary>
+        public List<TarefaCategoriaResponseDto> ObterTarefasPorCategoria(DateTime dataHoraInicio, DateTime dataHoraFim)
+        {
+            using (var context = new DataContext())
+            {
+                return context
+                        .Set<Tarefa>()
+                        .Include(t => t.Categoria)
+                        .Where(t => t.DataHora >= dataHoraInicio
+                                 && t.DataHora <= dataHoraFim)
+                        .GroupBy(t => t.Categoria!.Nome)
+                        .Select(g => new TarefaCategoriaResponseDto
+                        {
+                            NomeCategoria = g.Key!,
+                            QtdTarefas = g.Count()
+                        })
+                        .OrderByDescending(dto => dto.QtdTarefas)
+                        .ToList();
             }
         }
     }
